@@ -183,8 +183,8 @@ server <- function(input, output) {
   #this is where you put read csv
   
   inf_network <- reactive({
-    mock_nodes <- read.csv("~/Desktop/Social Networks/Mock_Trial/MT_nodes.csv") 
-    mock_edges_inf <- read.csv("~/Desktop/Social Networks/Mock_Trial/MT_edges_informal.csv") 
+    mock_nodes <- read.csv("MT_nodes.csv") 
+    mock_edges_inf <- read.csv("MT_edges_informal.csv") 
     mock_edges_inf <- mock_edges_inf[, c("source", "target", "weight")]
     net_mt_inf <-  graph_from_data_frame(d=mock_edges_inf, vertices = mock_nodes, directed = TRUE)
     
@@ -199,8 +199,8 @@ server <- function(input, output) {
   })
   
   f_network <- reactive({
-    mock_nodes <- read.csv("~/Desktop/Social Networks/Mock_Trial/MT_nodes.csv") 
-    mock_edges_f <- read.csv("~/Desktop/Social Networks/Mock_Trial/MT_edges_formal.csv")
+    mock_nodes <- read.csv("MT_nodes.csv") 
+    mock_edges_f <- read.csv("MT_edges_formal.csv")
     
     net_mt_f <- graph_from_data_frame(d=mock_edges_f, vertices = mock_nodes, directed = FALSE)
     
@@ -215,12 +215,12 @@ server <- function(input, output) {
   })
   
   network <- reactive({
-    mock_nodes <- read.csv("~/Desktop/Social Networks/Mock_Trial/MT_nodes.csv") 
+    mock_nodes <- read.csv("MT_nodes.csv") 
     
-    mock_edges_inf <- read.csv("~/Desktop/Social Networks/Mock_Trial/MT_edges_informal.csv") |>
+    mock_edges_inf <- read.csv("MT_edges_informal.csv") |>
       mutate(type = "informal")
     
-    mock_edges_f <- read.csv("~/Desktop/Social Networks/Mock_Trial/MT_edges_formal.csv") |>
+    mock_edges_f <- read.csv("MT_edges_formal.csv") |>
       mutate(type = "formal") |> rename(source = Source, target = Target)
     
     mock_edges_f2 <- mock_edges_f |>
