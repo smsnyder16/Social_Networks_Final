@@ -32,7 +32,16 @@ ui <- navbarPage(
       year. It documents both formally assigned connections within the team (Attorney and Witness pairs
       for competition) and members' informal interactions outside of meetings."),
              p("From analyzing the different network structures that I created with this data,
-I learned many things about the composition of Middlebury mock trial. *data analysis*"),
+I learned many things about the composition of Middlebury mock trial. Firstly, we are a generally well connected
+club, and these connections span across various attributes. It does not matter much the major,
+year, mock trial experience or role when it comes to connections. Just because of the sheer
+number of them, freshmen do tend to have homophily by year and make connections with other freshmen.
+ An analysis of mean centrality measurses also shows how the most connected nodes and the ones that 
+ play central bridge roles are more often witnesses than attorneys. A key number of attorneys, however,
+ have high centrality measures, these likely being the board members or team captains. Overall, mock trial
+ is a well connected club informally, and these connections span far outside of our assigned, formal ties
+ and across various attributes
+               "),
              p("The Data tab will tell you what is included in this data. It will include definitions
 of each edge type as well as overall counts for each node attribute. Finally, it will detail the collection
 process that I went through to obtain all of this data."),
