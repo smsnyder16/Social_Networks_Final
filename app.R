@@ -280,7 +280,7 @@ scale_edge_width(range = c(.3, 1.5)) +
       geom_edge_link(alpha = 0.7, color = "lightcoral") + 
       geom_node_point(aes(size = .data[[input$size_f]]),
                       color = "#A7D8F0") + 
-      scale_size_continuous(range = c(.5, 10)) + 
+      scale_size_continuous(range = c(5, 10)) + 
       labs(Nodes = input$size_f) + 
       theme_graph()
     
