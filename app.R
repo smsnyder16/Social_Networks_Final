@@ -38,23 +38,29 @@ ui <- navbarPage(
       year. It documents both formally assigned connections within the team (Attorney and Witness pairs
       for competition) and members' informal interactions outside of meetings."),
              p("From analyzing the different network structures that I created with this data,
-I learned many things about the composition of Middlebury mock trial. Firstly, we are a generally well connected
-club, and these connections span across various attributes. It does not matter much the major,
-year, mock trial experience or role when it comes to connections. Just because of the sheer
-number of them, freshmen do tend to have homophily by year and make connections with other freshmen.
- An analysis of mean centrality measurses also shows how the most connected nodes and the ones that 
- play central bridge roles are more often witnesses than attorneys. A key number of attorneys, however,
- have high centrality measures, these likely being the board members or team captains. Overall, mock trial
- is a well connected club informally, and these connections span far outside of our assigned, formal ties
- and across various attributes
-               "),
+I learned many things about the composition of Middlebury mock trial. Firstly, we are a well connected
+club outside of mere professional ties: the informal network is far denser than the formal one, so
+our club fosters actual friendships, not just relationships for competition. 
+
+Additionally, these connections that extend beyond assigned partnerships span across various attributes. 
+I used a community detection algorithm to identify clusters in the informal network, which show groups of individuals who interact more frequently within a network, 
+and found that it generally does not matter the major, year, mock trial experience or role when it comes to connections. 
+The one exception to this is homophily among freshmen, but this is because they are a clear majority in the network.
+
+An analysis of mean centrality measurses also shows that witnesses on average have higher degree and betweenness centrality than attorneys,
+suggesting they more often play socially central roles. A key number of attorneys, however, have high centrality measures, 
+and these are likely the board members or team captains. Overall, my suspicions were correct,
+mock trial does not merely act as a means of forming formal connections; contrastingly, it actually builds
+               a stronger network of friendships outside of the club."),
              p("The Data tab will tell you what is included in this data. It will include definitions
 of each edge type as well as overall counts for each node attribute. Finally, it will detail the collection
 process that I went through to obtain all of this data."),
              p("The Formal Network tab will present a network visualization of only the directed, formal edges
  between nodes. You can toggle through sizing nodes by betweeness and degree centrality. The Informal Network tab
-instead shows only the undirected informal edges, and presents the same ability to choose betweeness or degree centrality to size nodes. The Full Network tab visualizes both formal and informal edges. It is directed to show directions of the
-informal edges, and therefore shows every formal tie pointing both ways."),
+instead shows only the undirected informal edges, and presents the same ability to choose betweeness or degree centrality to size nodes. 
+The Full Network tab visualizes both formal and informal edges. 
+It is directed so that informal ties retain their direction,
+while formal ties are shown as mutual connections."),
              p("The interactive bar chart visualizes differences in the mean centrality measures of nodes depending on their role. 
 You can choose between degree and betweeness centrality. The stacked bar chart is based on the 3 top clusters
 in the informal network, and compares node attributes within clusters.")
@@ -146,8 +152,12 @@ Finally, note that we are predominantly a younger club, specifically freshman he
   ),
   
   # Bar Chart
-  tabPanel("Ineractive Bar Chart",
+  tabPanel("Interactive Bar Chart",
            fluidPage(
+             h3("Interactive Bar Chart"),
+             p("This is the interactive bar chart. Toggle through betweenness and degree centrality
+               and observe how witnesses, on average, have higher centrality meausres than attorneys.
+               This means they occupy more central social roles in the informal network."),
              radioButtons(
                "metric",
                "Centrality Measure",
@@ -163,6 +173,11 @@ Finally, note that we are predominantly a younger club, specifically freshman he
   
   tabPanel("Stacked Bar Charts",
            fluidPage(
+             h3("Stacked Bar Charts"),
+                     p("These are the stacked bar charts. Change the node attributes to
+see the composition of the top 3 clusters from the informal network. Notice how clusters are
+    often mixed among varying attributes. Note also the homophily among freshman, likely due to their
+                       large numbers in the network."),
              selectInput(
                "stack_var",
                "Choose attribute",
