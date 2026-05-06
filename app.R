@@ -22,8 +22,14 @@ library(visNetwork)
 
 # Define UI for application that draws a histogram
 ui <- navbarPage(
-  "Mock Trial Network",
-  
+  title = "Mock Trial Network",
+  theme = bs_theme(
+    version = 3,
+    bootswatch = "flatly",
+    primary = "#2C3E50",
+    base_font = font_google("Times New Roman")
+  ),
+
   # Introduction
   tabPanel("Introduction",
            fluidPage(
@@ -52,7 +58,7 @@ informal edges, and therefore shows every formal tie pointing both ways."),
              p("The interactive bar chart visualizes differences in the mean centrality measures of nodes depending on their role. 
 You can choose between degree and betweeness centrality. The stacked bar chart is based on the 3 top clusters
 in the informal network, and compares node attributes within clusters.")
- ) ),
+           ) ),
   
   # Data Collection
   tabPanel("Data",
@@ -153,22 +159,22 @@ Finally, note that we are predominantly a younger club, specifically freshman he
              plotOutput("bar_plot", height = "600px")
            )
   ),
- 
- 
- tabPanel("Stacked Bar Charts",
-          fluidPage(
-            selectInput(
-              "stack_var",
-              "Choose attribute",
-              choices = c(
-                "Role" = "Attorney.Witness",
-                "Year" = "Year",
-                "Mock Trial in HS" = "Did.mock.trial.in.high.school"
-              )
-            ),
-            plotOutput("stackedbar_plot", height = "600px")
-          )
- )
+  
+  
+  tabPanel("Stacked Bar Charts",
+           fluidPage(
+             selectInput(
+               "stack_var",
+               "Choose attribute",
+               choices = c(
+                 "Role" = "Attorney.Witness",
+                 "Year" = "Year",
+                 "Mock Trial in HS" = "Did.mock.trial.in.high.school"
+               )
+             ),
+             plotOutput("stackedbar_plot", height = "600px")
+           )
+  )
 )
 
 
@@ -254,18 +260,18 @@ server <- function(input, output) {
       mutate(degree = centrality_degree(), betweenness = centrality_betweenness())
     mt_tidy
   })
-
-
+  
+  
   
   output$network_inf <- renderPlot({
     net_mt_inf <- inf_network() 
     
-inf<- ggraph(net_mt_inf, layout = "auto") +
-   geom_edge_link(aes(width=weight), alpha = 0.8, color = "plum", 
-arrow=arrow(length = unit(2, "mm")),end_cap = circle(2, "mm")) + 
+    inf<- ggraph(net_mt_inf, layout = "auto") +
+      geom_edge_link(aes(width=weight), alpha = 0.8, color = "plum", 
+                     arrow=arrow(length = unit(2, "mm")),end_cap = circle(2, "mm")) + 
       geom_node_point(aes(size = .data[[input$size_inf]]),
                       color = "orange", alpha=.9) +
-scale_edge_width(range = c(.3, 1.5)) +
+      scale_edge_width(range = c(.3, 1.5)) +
       scale_size_continuous(range = c(.5, 10)) + 
       labs(Nodes = input$size_inf) + 
       theme_graph()
@@ -331,34 +337,37 @@ scale_edge_width(range = c(.3, 1.5)) +
   })
   
   output$stackedbar_plot <- renderPlot({
-      
-mt_inf_clusters <- inf_network() |> activate(nodes) |>
-mutate(cluster = group_walktrap(steps = 4)) |>
-filter(cluster == 1 | cluster == 2 | cluster == 3)
-      
-cluster_bar <- mt_inf_clusters |> as_tibble() 
-      
-ggplot(cluster_bar, aes(
-        x = factor(cluster), fill = .data[[input$stack_var]]
-      )) + geom_bar() + scale_fill_manual(values = c(
-        "Attorney" = "red",
-        "Witness" = "blue",
-        "Both" = "purple",
-        "Freshman" = "purple",
-        "Sophomore" = "darkorange",
-        "Junior" = "forestgreen",
-        "Senior" = "darkred",
-        "Yes" = "green3",
-        "No" = "red2")) +
-        labs( x = "Cluster",
-          y = "Number of people",
-          fill = input$stack_var
-        ) + theme_minimal()
-    })
-
+    
+    mt_inf_clusters <- inf_network() |> activate(nodes) |>
+      mutate(cluster = group_walktrap(steps = 4)) |>
+      filter(cluster == 1 | cluster == 2 | cluster == 3)
+    
+    cluster_bar <- mt_inf_clusters |> as_tibble() 
+    
+    ggplot(cluster_bar, aes(
+      x = factor(cluster), fill = .data[[input$stack_var]]
+    )) + geom_bar() + scale_fill_manual(values = c(
+      "Attorney" = "red",
+      "Witness" = "blue",
+      "Both" = "purple",
+      "Freshman" = "purple",
+      "Sophomore" = "darkorange",
+      "Junior" = "forestgreen",
+      "Senior" = "darkred",
+      "Yes" = "green3",
+      "No" = "red2")) +
+      labs( x = "Cluster",
+            y = "Number of people",
+            fill = input$stack_var
+      ) + theme_minimal()
+  })
+  
 }
 
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+
+
+
 
