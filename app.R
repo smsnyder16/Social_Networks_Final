@@ -17,12 +17,20 @@ library(igraph)
 library(tidygraph)
 library(ggraph)
 
-library(visNetwork)
 
 
 # Define UI for application that draws a histogram
 ui <- navbarPage(
   title = "Mock Trial Network",
+  
+  tags$head(
+    tags$style(HTML("
+    body {
+      font-size: 18px;
+    }
+  "))
+  ),
+  
   theme = bs_theme(
     version = 3,
     bootswatch = "flatly",
@@ -44,26 +52,27 @@ our club fosters actual friendships, not just relationships for competition.
 
 Additionally, these connections that extend beyond assigned partnerships span across various attributes. 
 I used a community detection algorithm to identify clusters in the informal network, which show groups of individuals who interact more frequently within a network, 
-and found that it generally does not matter the major, year, mock trial experience or role when it comes to connections. 
-The one exception to this is homophily among freshmen, but this is because they are a clear majority in the network.
+and found that it generally does not matter the major, mock trial experience or role when it comes to connections. 
+The assortativity for major is -.03, for experience it is -.06, and for role it is -.02.
+The one exception to this is homophily among freshmen (year has an assortativity of .177), but this is because they are a clear majority in the network.
 
-An analysis of mean centrality measurses also shows that witnesses on average have higher degree and betweenness centrality than attorneys,
+An analysis of mean centrality measures also shows that witnesses on average have higher degree and betweenness centrality than attorneys,
 suggesting they more often play socially central roles. A key number of attorneys, however, have high centrality measures, 
 and these are likely the board members or team captains. Overall, my suspicions were correct,
 mock trial does not merely act as a means of forming formal connections; contrastingly, it actually builds
-               a stronger network of friendships outside of the club."),
+               a stronger and diverse network of friendships outside of the club."),
              p("The Data tab will tell you what is included in this data. It will include definitions
 of each edge type as well as overall counts for each node attribute. Finally, it will detail the collection
 process that I went through to obtain all of this data."),
-             p("The Formal Network tab will present a network visualization of only the directed, formal edges
- between nodes. You can toggle through sizing nodes by betweeness and degree centrality. The Informal Network tab
-instead shows only the undirected informal edges, and presents the same ability to choose betweeness or degree centrality to size nodes. 
+             p("The Formal Network tab will present a network visualization of only the undirected, formal edges
+ between nodes. You can toggle through sizing nodes by betweenness and degree centrality. The Informal Network tab
+instead shows only the directed informal edges, and presents the same ability to choose betweenness or degree centrality to size nodes. 
 The Full Network tab visualizes both formal and informal edges. 
 It is directed so that informal ties retain their direction,
-while formal ties are shown as mutual connections."),
+while formal ties are shown as mutual connections. You can color nodes by their various attributes."),
              p("The interactive bar chart visualizes differences in the mean centrality measures of nodes depending on their role. 
-You can choose between degree and betweeness centrality. The stacked bar chart is based on the 3 top clusters
-in the informal network, and compares node attributes within clusters.")
+You can choose between degree and betweenness centrality. The stacked bar chart is based on the 3 top clusters
+in the informal network, and compares node attributes within each cluster.")
            ) ),
   
   # Data Collection
@@ -76,8 +85,8 @@ in the informal network, and compares node attributes within clusters.")
              selectInput("select_connection", 
                          "Select an option", 
                          choices = list(
-                           "Nodes" = "Members on the Middlebury mock trial team 2026",
-                           "Formal edges" = "They were paired to compete together as an Attorney-Witness pair. Some members played multiple roles. These are undirected",
+                           "Nodes" = "Members on the Middlebury Mock Trial team in 2026",
+                           "Formal edges" = "They were paired to compete together as an Attorney-Witness pair. Some members played multiple roles. These are undirected.",
                            "Informal edges" = "They interact outside the club, weighted 1 for since mock trial ended, 2 for in the past month, and 3 for in the past week. These are directed."
                          )),
              textOutput("connection_text"), 
@@ -107,9 +116,10 @@ instructed to click on whoever fit the description for each question, including 
   tabPanel("Formal Network",
            fluidPage(
              h3("Formal Network"),
-             p("This is  the formal network alone. Look at degree centrality and betweenness centrality, 
+             p("This is the formal network alone. Look at degree centrality and betweenness centrality, 
 and notice first how the numbers are relatively low for both, showing how most nodes do not have many connections and very few play key bridge roles. 
-Switch between the two network measures to see that those who are highly connected in the network also act as bridges between nodes."),
+Switch between the two network measures to see that those who are highly connected in the network also act as bridges between nodes.
+               The density of this network is 0.05, which is low."),
              selectInput("size_f", "Centrality measure",
                          choices = c("Degree Centrality" = "degree",
                                      "Betweenness Centrality" = "betweenness")),
@@ -124,7 +134,10 @@ Switch between the two network measures to see that those who are highly connect
              p("This is the informal network alone. See how the degree and betweenness measurements 
   are generally much higher here, showing nodes have more connections and more frequently act as bridges 
   than in the formal network. Notice that some nodes with high degrees also have high betweenness, but 
-  this does not apply to all of them. This means that not every highly connected node acts as a bridge."),
+  this does not apply to all of them. This means that not every highly connected node acts as a bridge.
+  Some bridges connect many nodes without having many overall ties
+  because they are in a common major (IPE, English) or the most common year (Freshman).
+               The density of this network is 0.26, which is moderately high."),
              
              selectInput("size_inf", "Centrality measure",
                          choices = c("Degree Centrality" = "degree",
@@ -138,7 +151,8 @@ Switch between the two network measures to see that those who are highly connect
            fluidPage(
              h3("Full Network"),
              p("This is the full network. Color the nodes by attribute (Roles, mock trial experience, and year) to understand more about who is connected to who. 
-Note that a few key attorneys are highly connected, but overall witness roles are more well connected (with higher average betweenness and degree centrality). This makes sense due to their generally outgoing and usually theatrical personalities; however, attorneys are mostly the ones in leadership roles, explaining the small, well connected group of them.
+Note that a few key attorneys are highly connected, but overall witness roles are more well connected (with higher average betweenness and degree centrality). This could be attributed to their selection for their
+generally outgoing and usually theatrical personalities; however, attorneys are mostly the ones in leadership roles, explaining the small, well connected group of them.
 See that the majority of people did not do mock trial before getting to Middlebury, and those that didn't can be just as well connected as those who did not. 
 Finally, note that we are predominantly a younger club, specifically freshman heavy. There are only 2 seniors and 3 juniors overall. Although the freshmen do have the majority of well connected spots because of their high numbers, you can see that key upperclassmen– likely those on the board– are also in well connected positions."),
              selectInput("node_attr", "Color nodes by:",
@@ -156,7 +170,7 @@ Finally, note that we are predominantly a younger club, specifically freshman he
            fluidPage(
              h3("Interactive Bar Chart"),
              p("This is the interactive bar chart. Toggle through betweenness and degree centrality
-               and observe how witnesses, on average, have higher centrality meausres than attorneys.
+               and observe how witnesses, on average, have higher centrality measures than attorneys.
                This means they occupy more central social roles in the informal network."),
              radioButtons(
                "metric",
@@ -287,8 +301,7 @@ server <- function(input, output) {
       geom_node_point(aes(size = .data[[input$size_inf]]),
                       color = "orange", alpha=.9) +
       scale_edge_width(range = c(.3, 1.5)) +
-      scale_size_continuous(range = c(.5, 10)) + 
-      labs(Nodes = input$size_inf) + 
+      scale_size_continuous(range = c(1, 10)) + 
       theme_graph()
     
     inf
@@ -301,7 +314,7 @@ server <- function(input, output) {
       geom_edge_link(alpha = 0.7, color = "lightcoral") + 
       geom_node_point(aes(size = .data[[input$size_f]]),
                       color = "#A7D8F0") + 
-      scale_size_continuous(range = c(5, 10)) + 
+      scale_size_continuous(range = c(3, 10)) + 
       labs(Nodes = input$size_f) + 
       theme_graph()
     
